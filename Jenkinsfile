@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "nilesh/flask-devops-demo"
+        IMAGE_NAME = "9137102267/flask-devops-demo"
         IMAGE_TAG = "${BUILD_NUMBER}"
         RELEASE_NAME = "flask-app"
         HELM_PATH = "./helm/flask-devops-demo"
