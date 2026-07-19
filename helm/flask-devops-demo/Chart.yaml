@@ -1,0 +1,11 @@
+apiVersion: v2
+name: flask-devops-demo
+description: Helm chart for Flask DevOps Demo Application
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - flask
+  - devops
+  - kubernetes
+  - helm
