@@ -22,3 +22,11 @@ resources:
   limits:
     cpu: "500m"
     memory: "256Mi"
+
+activeColor: blue
+
+blue:
+  enabled: true
+
+green:
+  enabled: false
