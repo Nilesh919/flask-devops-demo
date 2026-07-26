@@ -10,22 +10,19 @@ pipeline {
 
     stages {
 
-       stage('Docker Login') {
+        stage('Docker Login') {
             steps {
                 withCredentials([usernamePassword(
-                  credentialsId: 'dockerhub-creds',
-                  usernameVariable: 'DOCKER_USER',
-                  passwordVariable: 'DOCKER_PASS'
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
                 )]) {
                     sh '''
                     echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                     '''
+                }
+            }
         }
-    }
-}
-
-    }
-}
 
         stage('Build Docker Image') {
             steps {
@@ -43,18 +40,17 @@ pipeline {
             steps {
                 sh """
                 helm upgrade --install ${RELEASE_NAME} ${HELM_PATH} \
-                --set image.repository=${IMAGE_NAME} \
-                --set image.tag=${IMAGE_TAG}
+                  --set image.repository=${IMAGE_NAME} \
+                  --set image.tag=${IMAGE_TAG}
+                  --set activeColor=blue
                 """
             }
         }
 
-
-
         stage('Verify Deployment') {
-           steps {
-             sh 'kubectl rollout status deployment/flask-app-blue'
-          }
-       }
+            steps {
+                sh 'kubectl rollout status deployment/flask-app-blue'
+            }
+        }
     }
 }
