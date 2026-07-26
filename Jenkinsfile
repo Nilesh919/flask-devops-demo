@@ -24,20 +24,6 @@ pipeline {
     }
 }
 
-      stage('SonarQube Scan') {
-         steps {
-           script {
-             def scannerHome = tool 'SonarScanner'
-               withSonarQubeEnv('SonarQube') {
-                 sh """
-                  ${scannerHome}/bin/sonar-scanner \
-                    -Dsonar.projectKey=flask-devops-demo \
-                    -Dsonar.projectName=Flask-DevOps-Demo \
-                    -Dsonar.sources=. \
-                    -Dsonar.python.version=3.10
-                    """
-            }
-        }
     }
 }
 
@@ -63,10 +49,12 @@ pipeline {
             }
         }
 
+
+
         stage('Verify Deployment') {
-            steps {
-                sh "kubectl rollout status deployment/${RELEASE_NAME}"
-            }
-        }
+           steps {
+             sh 'kubectl rollout status deployment/flask-app-blue'
+          }
+       }
     }
 }
