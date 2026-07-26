@@ -24,6 +24,23 @@ pipeline {
     }
 }
 
+      stage('SonarQube Scan') {
+         steps {
+           script {
+             def scannerHome = tool 'SonarScanner'
+               withSonarQubeEnv('SonarQube') {
+                 sh """
+                  ${scannerHome}/bin/sonar-scanner \
+                    -Dsonar.projectKey=flask-devops-demo \
+                    -Dsonar.projectName=Flask-DevOps-Demo \
+                    -Dsonar.sources=. \
+                    -Dsonar.python.version=3.10
+                    """
+            }
+        }
+    }
+}
+
         stage('Build Docker Image') {
             steps {
                 sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
