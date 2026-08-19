@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 
 metadata:
-  name: {{ .Release.Name }}-green
+  name: {{ .Release.Name }}-blue
 
 spec:
   replicas: {{ .Values.replicaCount }}
@@ -10,13 +10,13 @@ spec:
   selector:
     matchLabels:
       app: {{ .Release.Name }}
-      version: green
+      
 
   template:
     metadata:
       labels:
         app: {{ .Release.Name }}
-        version: green
+        
 
     spec:
       containers:
