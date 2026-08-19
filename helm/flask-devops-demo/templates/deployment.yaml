@@ -10,28 +10,28 @@ spec:
   selector:
     matchLabels:
       app: {{ .Release.Name }}
-      
+      version: {{ .Values.activeColor }}
 
   template:
     metadata:
       labels:
         app: {{ .Release.Name }}
-        
+        version: {{ .Values.activeColor }}
 
     spec:
       containers:
-      - name: flask-app
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - name: flask-app
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
 
-        ports:
-        - containerPort: 5000
+          ports:
+            - containerPort: 5000
 
-        resources:
-          requests:
-            cpu: {{ .Values.resources.requests.cpu }}
-            memory: {{ .Values.resources.requests.memory }}
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
 
-          limits:
-            cpu: {{ .Values.resources.limits.cpu }}
-            memory: {{ .Values.resources.limits.memory }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
