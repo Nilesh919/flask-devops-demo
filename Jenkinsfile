@@ -42,7 +42,6 @@ pipeline {
                 helm upgrade --install ${RELEASE_NAME} ${HELM_PATH} \
                   --set image.repository=${IMAGE_NAME} \
                   --set image.tag=${IMAGE_TAG}
-                  --set activeColor=blue
                 """
             }
         }
