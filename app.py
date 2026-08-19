@@ -1,26 +1,27 @@
-from flask import Flask, jsonify
+from flask import Flask, request, render_template
 
 app = Flask(__name__)
 
-@app.route("/")
-def home():
-    return """
-    <h1>Welcome to BLUE deployment</h1>
-    <h3>Application deployed successfully using Docker, Jenkins, Helm and Kubernetes.</h3>
-    """
+USERNAME = "admin"
+PASSWORD = "admin123"
 
-@app.route("/health")
-def health():
-    return jsonify({
-        "status": "UP"
-    })
 
-@app.route("/version")
-def version():
-    return jsonify({
-        "application": "flask-devops-demo",
-        "version": "1.0.0"
-    })
+@app.route("/", methods=["GET", "POST"])
+def login():
+
+    message = ""
+
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        if username == USERNAME and password == PASSWORD:
+            message = "Login successful!"
+        else:
+            message = "Invalid username or password!"
+
+    return render_template("login.html", message=message)
+
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(debug=True)
