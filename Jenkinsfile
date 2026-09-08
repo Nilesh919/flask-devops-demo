@@ -16,7 +16,7 @@ pipeline {
                     . venv/bin/activate
                     pip install --upgrade pip setuptools
                     pip install "Flask>=2.0.0" pytest
-                    pytest
+                    PYTHONPATH=. pytest 
                 '''
             }
         }
