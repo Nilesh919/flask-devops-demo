@@ -35,3 +35,16 @@ spec:
             limits:
               cpu: {{ .Values.resources.limits.cpu }}
               memory: {{ .Values.resources.limits.memory }}
+
+   livenessProbe:
+     httpGet:
+      path: /healthz
+      port: 5000
+   initialDelaySeconds: 5
+   periodSeconds: 10
+readinessProbe:
+   httpGet:
+     path: /ready
+     port: 5000
+   initialDelaySeconds: 5
+   periodSeconds: 10
