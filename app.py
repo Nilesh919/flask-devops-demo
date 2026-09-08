@@ -1,51 +1,69 @@
-from flask import Flask, request, redirect, render_template_string
+import time
+from datetime import datetime, timezone
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
-tasks = []
+# Simulated in-memory database for API demonstration
+TODOS = [
+    {"id": 1, "task": "Configure Jenkins Pipeline", "done": True},
+    {"id": 2, "task": "Deploy Helm Chart to Kubernetes", "done": False}
+]
 
-HTML = """
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My To-Do List</title>
-</head>
-<body>
-    <h1>My To-Do List</h1>
+START_TIME = time.time()
 
-    <form method="POST" action="/add">
-        <input type="text" name="task" placeholder="Enter task" required>
-        <button type="submit">Add Task</button>
-    </form>
+# -------------------------------------------------------------------
+# Core Routes & Health Probes (Required for Helm/Kubernetes)
+# -------------------------------------------------------------------
 
-    <ul>
-    {% for task in tasks %}
-        <li>
-            {{ task }}
-            <a href="/delete/{{ loop.index0 }}">Delete</a>
-        </li>
-    {% endfor %}
-    </ul>
-</body>
-</html>
-"""
-
-@app.route("/")
+@app.route('/')
 def home():
-    return render_template_string(HTML, tasks=tasks)
+    return jsonify({
+        "status": "online",
+        "service": "flask-devops-demo",
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }), 200
 
-@app.route("/add", methods=["POST"])
-def add_task():
-    task = request.form.get("task")
-    if task:
-        tasks.append(task)
-    return redirect("/")
+@app.route('/healthz')
+def health_check():
+    """Liveness probe for Helm/Kubernetes deployment."""
+    return jsonify({"status": "healthy"}), 200
 
-@app.route("/delete/<int:index>")
-def delete_task(index):
-    if 0 <= index < len(tasks):
-        tasks.pop(index)
-    return redirect("/")
+@app.route('/ready')
+def readiness_check():
+    """Readiness probe for Helm/Kubernetes ingress traffic."""
+    return jsonify({"status": "ready"}), 200
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+@app.route('/metrics')
+def metrics():
+    """Basic runtime metrics endpoint."""
+    uptime_seconds = round(time.time() - START_TIME, 2)
+    return jsonify({
+        "uptime_seconds": uptime_seconds,
+        "total_todos": len(TODOS)
+    }), 200
+
+# -------------------------------------------------------------------
+# REST API Endpoints
+# -------------------------------------------------------------------
+
+@app.route('/api/v1/todos', methods=['GET'])
+def get_todos():
+    return jsonify({"count": len(TODOS), "data": TODOS}), 200
+
+@app.route('/api/v1/todos', methods=['POST'])
+def add_todo():
+    data = request.get_json()
+    if not data or 'task' not in data:
+        return jsonify({"error": "Field 'task' is required"}), 400
+    
+    new_item = {
+        "id": len(TODOS) + 1,
+        "task": data['task'],
+        "done": False
+    }
+    TODOS.append(new_item)
+    return jsonify({"message": "Task added", "item": new_item}), 201
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
