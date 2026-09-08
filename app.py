@@ -1,27 +1,47 @@
-from flask import Flask, request, render_template
+import tkinter as tk
+from tkinter import messagebox
 
-app = Flask(__name__)
+def add_task():
+    task = task_entry.get()
+    if task != "":
+        task_listbox.insert(tk.END, task)
+        task_entry.delete(0, tk.END)
+    else:
+        messagebox.showwarning("Warning", "You must enter a task.")
 
-USERNAME = "admin"
-PASSWORD = "admin123"
+def delete_task():
+    try:
+        selected_task_index = task_listbox.curselection()[0]
+        task_listbox.delete(selected_task_index)
+    except IndexError:
+        messagebox.showwarning("Warning", "You must select a task to delete.")
 
+# 1. Initialize the main application window
+root = tk.Tk()
+root.title("Simple To-Do List")
+root.geometry("400x450")
+root.config(bg="#f0f0f0")
 
-@app.route("/", methods=["GET", "POST"])
-def login():
+# 2. Create the Title Label
+title_label = tk.Label(root, text="My To-Do List", font=("Arial", 18, "bold"), bg="#f0f0f0", fg="#333333")
+title_label.pack(pady=10)
 
-    message = ""
+# 3. Create the Entry Box for new tasks
+task_entry = tk.Entry(root, font=("Arial", 14), width=25)
+task_entry.pack(pady=10)
 
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
+# 4. Create the Add Task Button
+add_button = tk.Button(root, text="Add Task", font=("Arial", 12), bg="#4CAF50", fg="white", width=15, command=add_task)
+add_button.pack(pady=5)
 
-        if username == USERNAME and password == PASSWORD:
-            message = "Login successful!"
-        else:
-            message = "Invalid username or password!"
+# 5. Create the Listbox to display tasks
+task_listbox = tk.スキル = tk.Listbox(root, font=("Arial", 12), width=28, height=10, bd=0, selectbackground="#a6a6a6")
+task_listbox.pack(pady=10)
 
-    return render_template("login.html", message=message)
+# 6. Create the Delete Task Button
+delete_button = tk.Button(root, text="Delete Selected", font=("Arial", 12), bg="#f44336", fg="white", width=15, command=delete_task)
+delete_button.pack(pady=5)
 
+# 7. Start the application main loop
+root.mainloop()
 
-if __name__ == "__main__":
-    app.run(debug=True)
