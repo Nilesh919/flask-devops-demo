@@ -1,47 +1,51 @@
-import tkinter as tk
-from tkinter import messagebox
+from flask import Flask, request, redirect, render_template_string
 
+app = Flask(__name__)
+
+tasks = []
+
+HTML = """
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My To-Do List</title>
+</head>
+<body>
+    <h1>My To-Do List</h1>
+
+    <form method="POST" action="/add">
+        <input type="text" name="task" placeholder="Enter task" required>
+        <button type="submit">Add Task</button>
+    </form>
+
+    <ul>
+    {% for task in tasks %}
+        <li>
+            {{ task }}
+            <a href="/delete/{{ loop.index0 }}">Delete</a>
+        </li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
+"""
+
+@app.route("/")
+def home():
+    return render_template_string(HTML, tasks=tasks)
+
+@app.route("/add", methods=["POST"])
 def add_task():
-    task = task_entry.get()
-    if task != "":
-        task_listbox.insert(tk.END, task)
-        task_entry.delete(0, tk.END)
-    else:
-        messagebox.showwarning("Warning", "You must enter a task.")
+    task = request.form.get("task")
+    if task:
+        tasks.append(task)
+    return redirect("/")
 
-def delete_task():
-    try:
-        selected_task_index = task_listbox.curselection()[0]
-        task_listbox.delete(selected_task_index)
-    except IndexError:
-        messagebox.showwarning("Warning", "You must select a task to delete.")
+@app.route("/delete/<int:index>")
+def delete_task(index):
+    if 0 <= index < len(tasks):
+        tasks.pop(index)
+    return redirect("/")
 
-# 1. Initialize the main application window
-root = tk.Tk()
-root.title("Simple To-Do List")
-root.geometry("400x450")
-root.config(bg="#f0f0f0")
-
-# 2. Create the Title Label
-title_label = tk.Label(root, text="My To-Do List", font=("Arial", 18, "bold"), bg="#f0f0f0", fg="#333333")
-title_label.pack(pady=10)
-
-# 3. Create the Entry Box for new tasks
-task_entry = tk.Entry(root, font=("Arial", 14), width=25)
-task_entry.pack(pady=10)
-
-# 4. Create the Add Task Button
-add_button = tk.Button(root, text="Add Task", font=("Arial", 12), bg="#4CAF50", fg="white", width=15, command=add_task)
-add_button.pack(pady=5)
-
-# 5. Create the Listbox to display tasks
-task_listbox = tk.スキル = tk.Listbox(root, font=("Arial", 12), width=28, height=10, bd=0, selectbackground="#a6a6a6")
-task_listbox.pack(pady=10)
-
-# 6. Create the Delete Task Button
-delete_button = tk.Button(root, text="Delete Selected", font=("Arial", 12), bg="#f44336", fg="white", width=15, command=delete_task)
-delete_button.pack(pady=5)
-
-# 7. Start the application main loop
-root.mainloop()
-
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
