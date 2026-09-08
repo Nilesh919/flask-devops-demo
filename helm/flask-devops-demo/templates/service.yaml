@@ -1,17 +1,12 @@
 apiVersion: v1
 kind: Service
-
 metadata:
   name: {{ .Release.Name }}
-
 spec:
-  type: {{ .Values.service.type }}
-  
-  selector:
-    app: {{ .Release.Name }}
-    version: {{ .Values.activeColor }}
-
+  type: NodePort
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: {{ .Values.service.targetPort }}
-      protocol: TCP
+    - port: 80
+      targetPort: 5000
+      nodePort: 32450
+  selector:
+    app: {{ .Release.Name }}-flask-devops-demo
