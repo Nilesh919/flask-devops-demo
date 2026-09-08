@@ -20,5 +20,5 @@ def test_healthz(client):
 def test_add_todo(client):
     res = client.post('/api/v1/todos', json={"task": "Run Automated Tests"})
     assert res.status_code == 201
-    assert res.json['item']['task'] == "Run Automated Tests".
+    assert res.json['item']['task'] == "Run Automated Tests"
 
