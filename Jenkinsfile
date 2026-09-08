@@ -48,7 +48,7 @@ pipeline {
 
         stage('Verify Deployment') {
             steps {
-                sh 'kubectl rollout status deployment/flask-app-blue'
+                sh 'kubectl rollout status deployment/flask-app'
             }
         }
     }
